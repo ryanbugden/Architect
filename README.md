@@ -50,6 +50,9 @@ Specify the ratio of the radii between the inside curve and the outside curve. T
 This area calculates the inner radius depending on the specified ratio and letter height. For display only.
 
 
+![](source/resources/ui-interaction.gif)
+
+
 ## Acknowledgements
 
 - Frederik Berlaen: RoboFont
