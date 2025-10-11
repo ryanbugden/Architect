@@ -168,7 +168,7 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
             for item_name, value in self.w.getItem("form").getItemValues().items():
                 self.w.getItem(item_name).enable(True)
                 values = []
-                print(item_name, value)
+                # print(item_name, value)
                 for font in self.fonts:
                     if EXT_LIB_KEY in font.lib:
                         if item_name in font.lib[EXT_LIB_KEY].keys():
