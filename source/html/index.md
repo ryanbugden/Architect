@@ -1,9 +1,9 @@
-<img src="source/resources/mechanic_icon.png"  width="80">
+<img src="../resources/mechanic_icon.png"  width="80">
 
 # Architect
 A RoboFont extension that provides dynamic guides for drawing type along curves.
 
-![](source/resources/ui-main.png)
+![](../resources/ui-main.png)
 
 ## Overview
 
@@ -11,7 +11,7 @@ For any given UFO, you may specify a radius ratio of a curve to set serve as the
 
 ## A tour of the interface
 
-![](source/resources/ui-window.png)
+![](../resources/ui-window.png)
 
 ### Font Table
 

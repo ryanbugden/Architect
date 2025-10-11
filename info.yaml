@@ -1,0 +1,14 @@
+name: Architect
+developer: Ryan Bugden
+developerURL: http://ryanbugden.com
+launchAtStartUp: true
+mainScript: subscriber.py
+version: 0.1
+addToMenu:
+- path: main.py
+  preferredName: Architect
+  shortKey: ""
+html: true
+timeStamp: 1760205911
+requiresVersionMajor: '4'
+requiresVersionMinor: '5'
