@@ -17,7 +17,7 @@ For any given UFO, you may specify a radius ratio of a curve to set serve as the
 
 This is a list of all open UFOs. You can make display changes to any or all of the selected UFOs, and this display settings will only update in the corresponding UFO.
 
-### Show
+### Show 
 
 Toggle the visibility of the rings, dynamic vertical guides, and horizontal guides.
 
