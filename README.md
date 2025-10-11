@@ -11,7 +11,7 @@ For any given UFO, you may specify a radius ratio of a curve to set serve as the
 
 ## A tour of the interface
 
-![](source/resources/ui-window.png)
+<img src="source/resources/ui-window.png"  height="500">
 
 ### Font Table
 
@@ -52,5 +52,5 @@ This area calculates the inner radius depending on the specified ratio and lette
 
 ## Acknowledgements
 
-Frederik Berlaen: RoboFont
-Tal Leming: EZUI, Subscriber, Merz
+- Frederik Berlaen: RoboFont
+- Tal Leming: EZUI, Subscriber, Merz
