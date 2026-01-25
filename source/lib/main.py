@@ -1,6 +1,7 @@
 # menuTitle: Architect
 
 import math
+from fontTools.misc.fixedTools import otRound
 import ezui
 from mojo.subscriber import Subscriber, registerRoboFontSubscriber, getRegisteredSubscriberEvents, registerSubscriberEvent
 from mojo.events import postEvent
@@ -164,7 +165,7 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
         g = CurrentGlyph()
         values = h_guides_field.get()
         for pt in g.selectedPoints:
-            y = self.flatten_y_on_arc(g, pt.x, pt.y)
+            y = otRound(self.flatten_y_on_arc(g, pt.x, pt.y))
             if y not in values:
                 values.append(y) 
         h_guides_field.set(values)
