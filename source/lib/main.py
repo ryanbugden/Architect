@@ -1,5 +1,6 @@
 # menuTitle: Architect
 
+import math
 import ezui
 from mojo.subscriber import Subscriber, registerRoboFontSubscriber, getRegisteredSubscriberEvents, registerSubscriberEvent
 from mojo.events import postEvent
@@ -148,14 +149,24 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
         table = self.w.getItem("fontsTable")
         self.fonts = table.getSelectedItems()
         self.update_form()
+
+    def flatten_y_on_arc(self, glyph, x, y):
+        # Calculate a flattened y based on hypotenuse from midpoint of circle
+        ratio = self.w.getItem("ratio").get()
+        inner_radius = glyph.font.info.capHeight / ratio
+        arc_x, arc_y = glyph.width / 2, - inner_radius
+        side_x, side_y = abs(arc_x - x), abs(arc_y - y)
+        hypot = math.sqrt(side_x**2 + side_y**2)
+        return hypot - inner_radius
         
     def addSelectedYsCallback(self, sender):
         h_guides_field = self.w.getItem("horizontalYs")
         g = CurrentGlyph()
         values = h_guides_field.get()
         for pt in g.selectedPoints:
-            if pt.y not in values:
-                values.append(pt.y) 
+            y = self.flatten_y_on_arc(g, pt.x, pt.y)
+            if y not in values:
+                values.append(y) 
         h_guides_field.set(values)
         self.formCallback(self.w.getItem("form"))
         
