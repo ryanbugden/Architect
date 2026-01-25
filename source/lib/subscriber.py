@@ -152,6 +152,7 @@ class ArchitectSubscriber(Subscriber):
                     self.draw_horizontal((self.g.width/2, y), mid_pt, color)
             
             # Vertical lines
+            outer_padding = 12  # Hard-coded padding outside the radius from which vertical guides may be drawn if cutoff isn’t maxed.
             self.line_container.clearSublayers()
             if self.settings["showVertical"]:
                 cutoff = self.settings["cutOff"]
@@ -159,8 +160,9 @@ class ArchitectSubscriber(Subscriber):
                     for pt in c.points:
                         if pt.type != "offcurve":
                             pt_distance = get_distance(pt.x, pt.y, *mid_pt)
-                            if outer_radius > pt_distance > inner_radius + self.f.info.capHeight * cutoff:
-                                self.draw_line(pt.x, pt.y, mid_pt, color)
+                            if outer_radius + outer_padding > pt_distance > inner_radius + self.f.info.capHeight * cutoff:
+                                if cutoff != 1:
+                                    self.draw_line(pt.x, pt.y, mid_pt, color)
 
     def draw_line(self, x, y, mid_pt, color):
         new_line = self.line_container.appendLineSublayer(
