@@ -1,5 +1,5 @@
 import merz
-from math import hypot
+from math import hypot, sqrt
 from mojo.UI import CurrentGlyphWindow
 from mojo.subscriber import Subscriber, registerGlyphEditorSubscriber
 
@@ -11,6 +11,29 @@ EXT_LIB_KEY = EXT_KEY + ".settings"
 def get_distance(x1, y1, x2, y2):
     distance = hypot(y2 - y1, x2 - x1)
     return distance
+
+def get_line_from_coords(ref_pt, mid_pt, inner_radius, outer_radius):
+    '''
+    Calculate an orthogonal line that points to the mid-point, 
+    but is cropped by the inner and outer radius, given a coordinate 
+    along that line, and the mid-point of the circles.
+    Returns start and end points as (x1, y1), (x2, y2).
+    '''
+    rx, ry = ref_pt
+    cx, cy = mid_pt
+
+    dx = rx - cx
+    dy = ry - cy
+    r = get_distance(rx, ry, cx, cy)
+
+    # unit radial direction from center -> ref_pt
+    ux, uy = dx / r, dy / r
+
+    # endpoints on inner and outer circles along that same ray
+    p1 = (cx + ux * inner_radius, cy + uy * inner_radius)
+    p2 = (cx + ux * outer_radius, cy + uy * outer_radius)
+
+    return p1, p2
 
 
 class ArchitectSubscriber(Subscriber):
@@ -100,7 +123,7 @@ class ArchitectSubscriber(Subscriber):
         self.update_drawing()
     
     def update_drawing(self):
-        if self.f and self.f.info.familyName != None and self.settings and self.g:
+        if self.f and self.f.info.familyName != None and self.settings and self.g is not None:
             self.f = self.g.font
 
             color = tuple(self.settings["guideColor"])
@@ -162,15 +185,25 @@ class ArchitectSubscriber(Subscriber):
                             pt_distance = get_distance(pt.x, pt.y, *mid_pt)
                             if outer_radius + outer_padding > pt_distance > inner_radius + self.f.info.capHeight * cutoff:
                                 if cutoff != 1:
-                                    self.draw_line(pt.x, pt.y, mid_pt, color)
+                                    self.draw_line((pt.x, pt.y), mid_pt, color)
 
-    def draw_line(self, x, y, mid_pt, color):
+            # Sidebearings
+            outer_padding = 12  # Hard-coded padding outside the radius from which vertical guides may be drawn if cutoff isn’t maxed.
+            self.line_container.clearSublayers()
+            if self.settings["showSidebearings"]:
+                y = self.f.info.capHeight if flip else 0
+                coords = [(0, y), (self.g.width, y)]
+                for coord in coords:
+                    line = get_line_from_coords(coord, mid_pt, inner_radius, outer_radius)
+                    self.draw_line(*line, color, dash=False)
+
+    def draw_line(self, p1, p2, color, dash=True):
         new_line = self.line_container.appendLineSublayer(
-            startPoint=(x, y),
-            endPoint=mid_pt,
+            startPoint=p1,
+            endPoint=p2,
             strokeColor=color,
             strokeWidth=1,
-            strokeDash=(5, 8)
+            strokeDash=(5, 8) if dash else None
             )
             
     def draw_horizontal(self, pt_coord, mid_pt, color):

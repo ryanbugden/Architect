@@ -42,6 +42,7 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
         > [ ] Rings        @showRings
         > [ ] Vertical     @showVertical
         > [ ] Horizontal   @showHorizontal
+        > [ ] Sidebearings @showSidebearings
         
         > : Top:
         > (X) Cap-Height   
