@@ -1,6 +1,6 @@
 # menuTitle: Architect
 
-import math
+from math import hypot
 from fontTools.misc.fixedTools import otRound
 import ezui
 from mojo.subscriber import Subscriber, registerRoboFontSubscriber, getRegisteredSubscriberEvents, registerSubscriberEvent
@@ -15,7 +15,12 @@ def reset_defaults():
     for font in AllFonts():
         if EXT_LIB_KEY in font.lib.keys():
             del font.lib[EXT_LIB_KEY]
+
+def get_distance(x1, y1, x2, y2):
+    distance = hypot(y2 - y1, x2 - x1)
+    return distance
   
+
 # reset_defaults()         
 
 class ArchitectWindow(Subscriber, ezui.WindowController):
@@ -156,9 +161,7 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
         ratio = self.w.getItem("ratio").get()
         inner_radius = glyph.font.info.capHeight / ratio
         arc_x, arc_y = glyph.width / 2, - inner_radius
-        side_x, side_y = abs(arc_x - x), abs(arc_y - y)
-        hypot = math.sqrt(side_x**2 + side_y**2)
-        return hypot - inner_radius
+        return get_distance(x, y, arc_x, arc_y) - inner_radius
         
     def addSelectedYsCallback(self, sender):
         h_guides_field = self.w.getItem("horizontalYs")
