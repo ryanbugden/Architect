@@ -56,8 +56,10 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
         > ---X---          @cutOff
         
         > : H Guides:
-        > [_ _]            @horizontalYs
-        > ( Add Selected)  @addSelectedYs
+        > * HorizontalStack
+        >> [_ _]           @horizontalYs
+        >> ({xmark})       @clearYs
+        > (Add Selected)   @addSelectedYs
         
         > : Color:
         > * ColorWell      @guideColor
@@ -125,6 +127,7 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
             ),
             horizontalYs=dict(
                 valueType="integerList",
+                width="fill",
             ),
             addSelectedYs=dict(
                 width="fill"
@@ -144,6 +147,7 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
             table.setSelectedIndexes([0])
 
     def started(self):
+        self.update_fonts_table()
         self.w.open()
         
     def fontDocumentDidOpen(self, sender):
@@ -173,6 +177,11 @@ class ArchitectWindow(Subscriber, ezui.WindowController):
             if y not in values:
                 values.append(y) 
         h_guides_field.set(values)
+        self.formCallback(self.w.getItem("form"))
+        
+    def clearYsCallback(self, sender):
+        h_guides_field = self.w.getItem("horizontalYs")
+        h_guides_field.set([])
         self.formCallback(self.w.getItem("form"))
         
     def update_fonts_table(self):

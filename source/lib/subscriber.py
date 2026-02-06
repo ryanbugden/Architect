@@ -73,8 +73,13 @@ class ArchitectSubscriber(Subscriber):
             location="background", 
             clear=True
         )
-        self.line_container = self.getGlyphEditor().extensionContainer(
-            identifier=EXT_KEY + ".lineContainer", 
+        self.vertical_container = self.getGlyphEditor().extensionContainer(
+            identifier=EXT_KEY + ".verticalContainer", 
+            location="foreground", 
+            clear=True
+        )
+        self.sidebearing_container = self.getGlyphEditor().extensionContainer(
+            identifier=EXT_KEY + ".sidebearingContainer",
             location="foreground", 
             clear=True
         )
@@ -122,9 +127,12 @@ class ArchitectSubscriber(Subscriber):
         self.draw_cutoff()
         self.update_drawing()
     
-    def update_drawing(self):
-        if self.f and self.f.info.familyName != None and self.settings and self.g is not None:
+    def update_drawing(self, horizontal_refresh=True):
+        debug = False
+        if debug:print(self.settings)
+        if self.f and self.settings and self.g is not None:
             self.f = self.g.font
+            
 
             color = tuple(self.settings["guideColor"])
             ring_ratio = self.settings["ratio"]
@@ -163,7 +171,7 @@ class ArchitectSubscriber(Subscriber):
                     strokeWidth=1,
                 )
                 
-            # Rings
+            # Horizontal guides
             self.horizontal_container.clearSublayers()
             if self.settings["showHorizontal"]:
                 # for c in self.g:
@@ -174,10 +182,12 @@ class ArchitectSubscriber(Subscriber):
                 for y in self.settings["horizontalYs"]:
                     self.draw_horizontal((self.g.width/2, y), mid_pt, color)
             
-            # Vertical lines
+            # Vertical lines (general)
+            self.vertical_container.clearSublayers()
+            # Vertical guides
             outer_padding = 12  # Hard-coded padding outside the radius from which vertical guides may be drawn if cutoff isn’t maxed.
-            self.line_container.clearSublayers()
             if self.settings["showVertical"]:
+                if debug: print("Show Vertical is on.")
                 cutoff = self.settings["cutOff"]
                 for c in self.g:
                     for pt in c.points:
@@ -185,20 +195,20 @@ class ArchitectSubscriber(Subscriber):
                             pt_distance = get_distance(pt.x, pt.y, *mid_pt)
                             if outer_radius + outer_padding > pt_distance > inner_radius + self.f.info.capHeight * cutoff:
                                 if cutoff != 1:
-                                    self.draw_line((pt.x, pt.y), mid_pt, color)
-
+                                    if debug: print("Making vertical line here", (pt.x, pt.y))
+                                    self.draw_line(self.vertical_container, (pt.x, pt.y), mid_pt, color)
             # Sidebearings
+            self.sidebearing_container.clearSublayers()
             outer_padding = 12  # Hard-coded padding outside the radius from which vertical guides may be drawn if cutoff isn’t maxed.
-            self.line_container.clearSublayers()
             if self.settings["showSidebearings"]:
                 y = self.f.info.capHeight if flip else 0
                 coords = [(0, y), (self.g.width, y)]
                 for coord in coords:
                     line = get_line_from_coords(coord, mid_pt, inner_radius, outer_radius)
-                    self.draw_line(*line, color, dash=False)
+                    self.draw_line(self.sidebearing_container, *line, color, dash=False)
 
-    def draw_line(self, p1, p2, color, dash=True):
-        new_line = self.line_container.appendLineSublayer(
+    def draw_line(self, container, p1, p2, color, dash=True):
+        new_line = container.appendLineSublayer(
             startPoint=p1,
             endPoint=p2,
             strokeColor=color,
